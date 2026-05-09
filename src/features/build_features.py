@@ -17,13 +17,13 @@ class BankFeatureEngineer(BaseEstimator, TransformerMixin):
         # Evitar modificar el DataFrame original
         X_out = X.copy()
         
-        # 1. PDAYS: 999 significa que no fue contactado antes.
+        # 1. PDAYS: -1 significa que no fue contactado antes.
         # Creamos una variable binaria y arreglamos el valor atípico
         if 'pdays' in X_out.columns:
-            X_out['contacted_before'] = (X_out['pdays'] != 999).astype(int)
-            # Reemplazar 999 por -1 para que el modelo lineal no asuma 
-            # que 999 días es "mucho tiempo de algo bueno"
-            X_out.loc[X_out['pdays'] == 999, 'pdays'] = -1
+            X_out['contacted_before'] = (X_out['pdays'] != -1).astype(int)
+            # Reemplazar -1 por NaN para poder imputar correctamente 
+            # y que el modelo lineal no asuma magnitudes falsas
+            X_out.loc[X_out['pdays'] == -1, 'pdays'] = np.nan
             
         # 2. PREVIOUS: Contactos previos en otras campañas
         if 'previous' in X_out.columns:

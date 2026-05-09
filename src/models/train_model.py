@@ -1,6 +1,7 @@
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
+from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import precision_recall_curve
 from src.features.build_features import BankFeatureEngineer
@@ -20,11 +21,27 @@ def build_logistic_pipeline(X, class_weight='balanced', max_iter=1000):
     numeric_features = X_fe.select_dtypes(include=['int64', 'float64', 'int32']).columns.tolist()
     categorical_features = X_fe.select_dtypes(include=['object', 'category']).columns.tolist()
     
+    # Pipelines internos para números y categorías
+    numeric_pipeline = Pipeline(steps=[
+        ("imputer", SimpleImputer(strategy="median")),
+        ("scaler", StandardScaler())
+    ])
+
+    try:
+        one_hot_encoder = OneHotEncoder(handle_unknown='ignore', drop='first', sparse_output=False)
+    except TypeError:
+        one_hot_encoder = OneHotEncoder(handle_unknown='ignore', drop='first', sparse=False)
+
+    categorical_pipeline = Pipeline(steps=[
+        ("imputer", SimpleImputer(strategy="constant", fill_value="missing")),
+        ("encoder", one_hot_encoder)
+    ])
+    
     # Preprocesador
     preprocessor = ColumnTransformer(
         transformers=[
-            ('num', StandardScaler(), numeric_features),
-            ('cat', OneHotEncoder(handle_unknown='ignore', drop='first', sparse_output=False), categorical_features)
+            ('num', numeric_pipeline, numeric_features),
+            ('cat', categorical_pipeline, categorical_features)
         ])
         
     # Pipeline Completo
