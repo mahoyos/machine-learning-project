@@ -1,0 +1,65 @@
+name: MLOps Production Pipeline
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build-train-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Train Model
+        run: |
+          echo "Entrenando el modelo..."
+          python src/train.py
+
+      - name: Evaluate Model & Track with MLflow
+        run: |
+          echo "Evaluando el modelo..."
+          python src/evaluate.py
+
+      - name: Validate Model Thresholds
+        run: |
+          echo "Validando métricas de performance..."
+          python src/validate.py
+
+      - name: Upload Trained Model
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: model
+          path: models/model.pkl
+
+      - name: Upload MLflow Tracking Data
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: mlruns
+          path: |
+            mlruns/
+            mlruns.db
+
+      - name: Upload Metrics
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: metrics
+          path: reports/metrics.json
+
