@@ -76,7 +76,7 @@ jobs:
       - name: Push model to DVC remote
         run: |
             # Configuramos el remote de DagsHub apuntando al repositorio actual
-            dvc remote add -d dagshub ${{ variables.DAGSHUB_REPO }}.dvc --force
+            dvc remote add -d dagshub ${{ vars.DAGSHUB_REPO }}.dvc --force
             dvc remote modify dagshub --local auth basic
             dvc remote modify dagshub --local user ${{ github.repository_owner }}
             dvc remote modify dagshub --local password ${{ secrets.DAGSHUB_TOKEN }}
