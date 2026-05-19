@@ -5,7 +5,7 @@ matplotlib
 seaborn
 scikit-learn
 xgboost
-
+dvc
 mlflow
 streamlit
 pytest
