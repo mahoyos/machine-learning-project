@@ -69,3 +69,13 @@ jobs:
           name: metrics
           path: reports/metrics.json
 
+      - name: Track model with DVC
+        run: |
+            dvc add models/model.pkl
+
+      - name: Push model to DVC remote
+        env:
+            DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
+        run: |
+            dvc push
+
