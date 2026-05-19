@@ -80,11 +80,14 @@ jobs:
             DAGSHUB_USER: ${{ vars.DAGSHUB_USER }}
             DAGSHUB_REPO: ${{ vars.DAGSHUB_REPO }}
         run: |
-            # Ajustamos la inyección para usar explícitamente el token HTTP como Basic Auth directo
-            dvc remote add -d dagshub "https://${DAGSHUB_USER}:${DAGSHUB_TOKEN}@dagshub.com/${DAGSHUB_REPO}.dvc" --force
+            # DagsHub requiere sintaxis especial para el usuario DVC con variables puras
+            dvc remote add -d dagshub https://dagshub.com/${DAGSHUB_REPO}.dvc --force
+            dvc remote modify dagshub --local auth basic
+            dvc remote modify dagshub --local user ${DAGSHUB_USER}
+            dvc remote modify dagshub --local password ${DAGSHUB_TOKEN}
             
             rm -f .dvc/tmp/lock
             
-            # Ejecutamos el push sin depender de http puro (usando auth_header o s3)
+            # Subir
             dvc push -r dagshub
 
