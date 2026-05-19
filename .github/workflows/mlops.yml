@@ -82,7 +82,10 @@ jobs:
             dvc remote modify dagshub --local auth basic
             dvc remote modify dagshub --local user "$DAGSHUB_USER"
             dvc remote modify dagshub --local password "$DAGSHUB_TOKEN"
-            # Actualizamos de DVC remoto seguro para asegurar uploads asincrónicos
-            dvc config core.hardlink_lock true
-            dvc push -r dagshub -v
+            
+            # Limpiamos el caché temporal de GitHub Actions que está bloqueando DVC "dvc.lock"
+            rm -f .dvc/tmp/lock
+            
+            # Subimos el modelo a DagsHub
+            dvc push -r dagshub
 
