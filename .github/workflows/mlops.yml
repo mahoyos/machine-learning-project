@@ -78,9 +78,10 @@ jobs:
         env:
             DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
             DAGSHUB_USER: ${{ vars.DAGSHUB_USER }}
+            DAGSHUB_REPO: ${{ vars.DAGSHUB_REPO }}
         run: |
             # Ajustamos la inyección para usar explícitamente el token HTTP como Basic Auth directo
-            dvc remote add -d dagshub https://${{ vars.DAGSHUB_USER }}:${{ secrets.DAGSHUB_TOKEN }}@dagshub.com/${{ vars.DAGSHUB_REPO }}.dvc --force
+            dvc remote add -d dagshub "https://${DAGSHUB_USER}:${DAGSHUB_TOKEN}@dagshub.com/${DAGSHUB_REPO}.dvc" --force
             
             rm -f .dvc/tmp/lock
             
