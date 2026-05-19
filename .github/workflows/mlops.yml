@@ -74,11 +74,9 @@ jobs:
             dvc add models/model.pkl
 
       - name: Push model to DVC remote
-        env:
-            DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
         run: |
             # Configuramos el remote de DagsHub apuntando al repositorio actual
-            dvc remote add -d dagshub https://dagshub.com/${{ github.repository }}.dvc --force
+            dvc remote add -d dagshub ${{ variables.DAGSHUB_REPO }}.dvc --force
             dvc remote modify dagshub --local auth basic
             dvc remote modify dagshub --local user ${{ github.repository_owner }}
             dvc remote modify dagshub --local password ${{ secrets.DAGSHUB_TOKEN }}
