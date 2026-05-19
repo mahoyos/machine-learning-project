@@ -26,16 +26,22 @@ jobs:
           pip install -r requirements.txt
 
       - name: Train Model
+        env:
+          PYTHONPATH: .
         run: |
           echo "Entrenando el modelo..."
           python src/train.py
 
       - name: Evaluate Model & Track with MLflow
+        env:
+          PYTHONPATH: .
         run: |
           echo "Evaluando el modelo..."
           python src/evaluate.py
 
       - name: Validate Model Thresholds
+        env:
+          PYTHONPATH: .
         run: |
           echo "Validando métricas de performance..."
           python src/validate.py
