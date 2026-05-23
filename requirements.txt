@@ -9,3 +9,6 @@ dvc
 mlflow
 streamlit
 pytest
+optuna
+lightgbm
+shap
